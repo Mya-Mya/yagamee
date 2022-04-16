@@ -1,6 +1,6 @@
-![GitHub](https://img.shields.io/github/license/Mya-Mya/yagamee)
-![PyPI](https://img.shields.io/pypi/v/yagamee)
-![Language](https://img.shields.io/github/languages/top/Mya-Mya/yagamee)
+[![License](https://img.shields.io/github/license/Mya-Mya/yagamee)](https://github.com/Mya-Mya/yagamee)
+[![PyPI](https://img.shields.io/pypi/v/yagamee)](https://pypi.org/project/yagamee/)
+[![Language](https://img.shields.io/github/languages/top/Mya-Mya/yagamee)](https://github.com/Mya-Mya/yagamee)
 # yagamee
 
 グラフ描画・データ整理などなど
