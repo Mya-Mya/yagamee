@@ -1,7 +1,6 @@
 def init_rcparams():
-    import json
     import matplotlib
-    yagamee_rcparams = json.load(open('yagamee_rcparams.json'))
+    from yagamee.yagamee_rcparams import yagamee_rcparams
     matplotlib.rcParams.update(yagamee_rcparams)
 
 
