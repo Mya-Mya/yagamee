@@ -84,7 +84,7 @@ def copy_as_latex(
     styler: Styler = format_sigfig(table, sigfig_notation, "latex")
     if not show_index:
         styler = styler.hide()
-    latex: str = styler.to_latex()
+    latex: str = styler.to_latex(hrules=True,position_float="centering",caption="-----")
     clipboard.copy(latex)
     return styler
 
