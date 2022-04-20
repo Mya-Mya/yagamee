@@ -2,11 +2,12 @@ from typing import Callable, List, Optional, Dict, Collection, Any
 from pandas import DataFrame
 from pandas.io import clipboard
 from pandas.io.formats.style import Styler
-import sigfig
 import re
 import tempfile
 import os
 from pathlib import Path
+from yagamee import formats
+from yagamee.formats import Format
 
 DictData = Dict[str, Collection[Any]]
 ListishData = Collection[Any]
@@ -27,16 +28,7 @@ def to_styler(table:DataFrameOrStyler)->Styler:
         pass
     return table
 
-sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|\s")
-Format=Callable[[float|int],str]
-def create_f_formatter(digits: str) -> Format:
-    return lambda x: ("{:."+str(digits)+"f}").format(x)
-def create_g_formatter(digits: str) -> Format:
-    return lambda x: ("{:."+str(digits)+"g}").format(x)
-def create_e_formatter(digits: str) -> Format:
-    return lambda x: ("{:."+str(digits)+"e}").format(x)
-def create_G_formatter(digits: str) -> Format:
-    return lambda x:sigfig.round(str(x), sigfigs=int(digits))
+sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|\s")
 Formatter=Dict[str,Format]
 
 def create_formatter(notation: Optional[str],columns:List[str])->Optional[Formatter]:
@@ -50,13 +42,15 @@ def create_formatter(notation: Optional[str],columns:List[str])->Optional[Format
         format_param: str = format_order[1:]
         format: Format = None
         if(format_method == "f"):
-            format = create_f_formatter(format_param)
+            format = formats.create_f_format(format_param)
         elif(format_method == "g"):
-            format = create_g_formatter(format_param)
+            format = formats.create_g_format(format_param)
         elif(format_method == "e"):
-            format = create_e_formatter(format_param)
+            format = formats.create_e_format(format_param)
         elif(format_method == "G"):
-            format = create_G_formatter(format_param)
+            format = formats.create_sigfig_format(format_param)
+        elif(format_method == "E"):
+            format = formats.create_latexified_e_format(format_param)
         if format:
             formatter[column_name] = format
     return formatter
