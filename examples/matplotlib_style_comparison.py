@@ -23,3 +23,5 @@ def plot_using_matplotlib(title):
 plot_using_matplotlib("タイトル : Before importing yagamee")
 import yagamee
 plot_using_matplotlib("タイトル : After importing yagamee")
+yagamee.matplotlib_tools.restore_rcparams()
+plot_using_matplotlib("タイトル : After restoring rcparams")
