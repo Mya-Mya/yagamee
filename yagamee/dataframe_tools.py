@@ -7,11 +7,13 @@ import tempfile
 import os
 from pathlib import Path
 from yagamee import formats
-from yagamee.formats import Format
+from yagamee.formats import Format, ExpExprStyle
 
 DictData = Dict[str, Collection[Any]]
 ListishData = Collection[Any]
-def to_dataframe(data:DataFrame|DictData|ListishData|Styler)->DataFrame:
+
+
+def to_dataframe(data: DataFrame | DictData | ListishData | Styler) -> DataFrame:
     if(isinstance(data, DataFrame)):
         pass
     elif(isinstance(data, Styler)):
@@ -20,18 +22,23 @@ def to_dataframe(data:DataFrame|DictData|ListishData|Styler)->DataFrame:
         data = DataFrame(data)
     return data
 
-DataFrameOrStyler = DataFrame|Styler
-def to_styler(table:DataFrameOrStyler)->Styler:
+
+DataFrameOrStyler = DataFrame | Styler
+
+
+def to_styler(table: DataFrameOrStyler) -> Styler:
     if(isinstance(table, DataFrame)):
         table = table.style
     else:
         pass
     return table
 
-sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|\s")
-Formatter=Dict[str,Format]
 
-def create_formatter(notation: Optional[str],columns:List[str])->Optional[Formatter]:
+sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|\s")
+Formatter = Dict[str, Format]
+
+
+def create_formatter(notation: Optional[str], columns: List[str], exp_expr_style: ExpExprStyle = "original") -> Optional[Formatter]:
     if notation is None:
         return None
     formatter: Dict = {}
@@ -48,18 +55,22 @@ def create_formatter(notation: Optional[str],columns:List[str])->Optional[Format
         elif(format_method == "e"):
             format = formats.create_e_format(format_param)
         elif(format_method == "G"):
-            format = formats.create_sigfig_format(format_param)
+            format = formats.create_translated_g_format(
+                format_param, exp_expr_style)
         elif(format_method == "E"):
-            format = formats.create_latexified_e_format(format_param)
+            format = formats.create_translated_e_format(
+                format_param, exp_expr_style)
         if format:
             formatter[column_name] = format
     return formatter
 
-def format_sigfig(table: DataFrameOrStyler, notation: Optional[str]) -> Styler:
-    formatter:Optional[Formatter] = create_formatter(notation,table.columns)
+
+def format_sigfig(table: DataFrameOrStyler, notation: Optional[str], exp_expr_style: ExpExprStyle = "original") -> Styler:
+    formatter: Optional[Formatter] = create_formatter(
+        notation, table.columns, exp_expr_style)
     if formatter:
-        table:DataFrame = to_dataframe(table).copy()
-        for column_name,format in formatter.items():
+        table: DataFrame = to_dataframe(table).copy()
+        for column_name, format in formatter.items():
             table[column_name] = table[column_name].transform(format)
     styler = to_styler(table)
     return styler
@@ -70,19 +81,22 @@ def copy_as_latex(
     sigfig_notation: Optional[str] = None,
     show_index: bool = False,
 ) -> Styler:
-    styler: Styler = format_sigfig(table, sigfig_notation)
+    styler: Styler = format_sigfig(table, sigfig_notation, "latex")
     if not show_index:
         styler = styler.hide()
     latex: str = styler.to_latex()
     clipboard.copy(latex)
     return styler
 
-excel_file_path:str = str(Path(tempfile.gettempdir()) / "yagamee_temp_table.xlsx")
+
+excel_file_path: str = str(
+    Path(tempfile.gettempdir()) / "yagamee_temp_table.xlsx")
+
 
 def preview_in_excel(
     table: DataFrameOrStyler,
     sigfig_notation: Optional[str] = None
 ) -> None:
-    styler: Styler = format_sigfig(table, sigfig_notation)
+    styler: Styler = format_sigfig(table, sigfig_notation, "word")
     styler.to_excel(excel_file_path)
     os.startfile(excel_file_path)
