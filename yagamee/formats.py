@@ -24,7 +24,7 @@ def latexify_exp_expr(x: str) -> str:
     if exponent == 0:
         return mantissa
     else:
-        return mantissa + r"\times10^{" + str(exponent) + "}"
+        return "$"+mantissa + r"\times10^{" + str(exponent) + "}$"
 
 
 def wordify_exp_expr(x: str) -> str:
