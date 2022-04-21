@@ -7,7 +7,7 @@ import tempfile
 import os
 from pathlib import Path
 from yagamee import formats
-from yagamee.formats import Format, ExpExprStyle
+from yagamee.formats import FormatFunction, ExpExprStyle
 
 DictData = Dict[str, Collection[Any]]
 ListishData = Collection[Any]
@@ -34,8 +34,8 @@ def to_styler(table: DataFrameOrStyler) -> Styler:
     return table
 
 
-sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|\s")
-Formatter = Dict[str, Format]
+sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|F\d+|\s")
+Formatter = Dict[str, FormatFunction]
 
 
 def create_formatter(notation: Optional[str], columns: List[str], exp_expr_style: ExpExprStyle = "original") -> Optional[Formatter]:
@@ -47,7 +47,7 @@ def create_formatter(notation: Optional[str], columns: List[str], exp_expr_style
     for format_order, column_name in zip(format_order_s, list(columns)):
         format_method: str = format_order[0]
         format_param: str = format_order[1:]
-        format: Format = None
+        format: FormatFunction = None
         if(format_method == "f"):
             format = formats.create_f_format(format_param)
         elif(format_method == "g"):
@@ -60,6 +60,8 @@ def create_formatter(notation: Optional[str], columns: List[str], exp_expr_style
         elif(format_method == "E"):
             format = formats.create_translated_e_format(
                 format_param, exp_expr_style)
+        elif(format_method == "F"):
+            format = formats.create_force_f_format(format_param)
         if format:
             formatter[column_name] = format
     return formatter
