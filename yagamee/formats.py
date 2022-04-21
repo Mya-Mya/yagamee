@@ -1,7 +1,7 @@
 from typing import Callable, Literal, Tuple, Dict
 import re
 
-Format = Callable[[float | int], str]
+FormatFunction = Callable[[float | int], str]
 ExpExprStyle = Literal["latex", "word", "original"]
 ExpExprTranslator = Callable[[str], str]
 
@@ -46,20 +46,20 @@ exp_expr_translators: Dict[ExpExprStyle, ExpExprTranslator] = {
 }
 
 
-def create_f_format(digits: str) -> Format:
+def create_f_format(digits: str) -> FormatFunction:
     return lambda x: ("{:."+str(digits)+"f}").format(x)
 
 
-def create_g_format(digits: str) -> Format:
+def create_g_format(digits: str) -> FormatFunction:
     return lambda x: ("{:."+str(digits)+"g}").format(x)
 
 
-def create_e_format(digits: str) -> Format:
+def create_e_format(digits: str) -> FormatFunction:
     return lambda x: ("{:."+str(digits)+"e}").format(x)
 
 
-def create_translated_e_format(digits: str, style: ExpExprStyle = "original") -> Format:
-    e_format: Format = create_e_format(digits)
+def create_translated_e_format(digits: str, style: ExpExprStyle = "original") -> FormatFunction:
+    e_format: FormatFunction = create_e_format(digits)
     exp_expr_translator: ExpExprTranslator = exp_expr_translators[style]
 
     def format(x):
@@ -70,8 +70,8 @@ def create_translated_e_format(digits: str, style: ExpExprStyle = "original") ->
     return format
 
 
-def create_translated_g_format(digits: str, style: ExpExprStyle = "original") -> Format:
-    g_format: Format = create_g_format(digits)
+def create_translated_g_format(digits: str, style: ExpExprStyle = "original") -> FormatFunction:
+    g_format: FormatFunction = create_g_format(digits)
     exp_expr_translator: ExpExprTranslator = exp_expr_translators[style]
 
     def format(x):
