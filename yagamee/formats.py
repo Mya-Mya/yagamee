@@ -1,5 +1,7 @@
 from typing import Callable, Literal, Tuple, Dict
 import re
+from math import log10
+import sigfig
 
 FormatFunction = Callable[[float | int], str]
 ExpExprStyle = Literal["latex", "word", "original"]
@@ -75,8 +77,11 @@ def create_translated_g_format(digits: str, style: ExpExprStyle = "original") ->
     exp_expr_translator: ExpExprTranslator = exp_expr_translators[style]
 
     def format(x):
-        g_formatted: str = g_format(x)
-        translated: str = exp_expr_translator(g_formatted)
-        return translated
+        di: int = int(log10(abs(x)))
+        if di >= int(digits):
+            g_formatted: str = g_format(x)
+            translated: str = exp_expr_translator(g_formatted)
+            return translated
+        return sigfig.round(str(x), sigfigs=digits, warn=False)
 
     return format
