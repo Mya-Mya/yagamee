@@ -1,4 +1,4 @@
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 from yagamee import matplotlib_tools
 from yagamee import dataframe_tools
 from yagamee import formats
