@@ -34,7 +34,7 @@ def to_styler(table: DataFrameOrStyler) -> Styler:
     return table
 
 
-sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|\s")
+sigfig_notation_regex: re.Pattern = re.compile(r"f\d+|g\d+|e\d+|G\d+|E\d+|F\d+|\s")
 Formatter = Dict[str, FormatFunction]
 
 
@@ -60,6 +60,8 @@ def create_formatter(notation: Optional[str], columns: List[str], exp_expr_style
         elif(format_method == "E"):
             format = formats.create_translated_e_format(
                 format_param, exp_expr_style)
+        elif(format_method == "F"):
+            format = formats.create_force_f_format(format_param)
         if format:
             formatter[column_name] = format
     return formatter
