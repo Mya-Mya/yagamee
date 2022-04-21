@@ -59,6 +59,8 @@ def create_g_format(digits: str) -> FormatFunction:
 def create_e_format(digits: str) -> FormatFunction:
     return lambda x: ("{:."+str(digits)+"e}").format(x)
 
+def create_force_f_format(digits: str) -> FormatFunction:
+    return lambda x: sigfig.round(str(x), decimals=int(digits), warn=False)
 
 def create_translated_e_format(digits: str, style: ExpExprStyle = "original") -> FormatFunction:
     e_format: FormatFunction = create_e_format(digits)
