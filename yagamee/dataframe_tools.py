@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Dict, Collection, Any
+from typing import Callable, List, Optional, Dict, Collection, Any, Union
 from pandas import DataFrame
 from pandas.io import clipboard
 from pandas.io.formats.style import Styler
@@ -13,7 +13,7 @@ DictData = Dict[str, Collection[Any]]
 ListishData = Collection[Any]
 
 
-def to_dataframe(data: DataFrame | DictData | ListishData | Styler) -> DataFrame:
+def to_dataframe(data: Union[DataFrame, DictData, ListishData, Styler]) -> DataFrame:
     if(isinstance(data, DataFrame)):
         pass
     elif(isinstance(data, Styler)):
@@ -23,7 +23,7 @@ def to_dataframe(data: DataFrame | DictData | ListishData | Styler) -> DataFrame
     return data
 
 
-DataFrameOrStyler = DataFrame | Styler
+DataFrameOrStyler = Union[DataFrame, Styler]
 
 
 def to_styler(table: DataFrameOrStyler) -> Styler:
