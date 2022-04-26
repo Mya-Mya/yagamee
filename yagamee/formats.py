@@ -1,10 +1,11 @@
-from typing import Callable, Literal, Tuple, Dict
+from typing import Callable, Tuple, Dict, Union
 import re
 from math import log10
 import sigfig
 
-FormatFunction = Callable[[float | int], str]
-ExpExprStyle = Literal["latex", "word", "original"]
+Number = Union[int, float]
+FormatFunction = Callable[[Number], str]
+ExpExprStyle = {"latex": "latex", "word": "word", "original": "original"}
 ExpExprTranslator = Callable[[str], str]
 
 exp_regex: re.Pattern = re.compile(r".*[eE]([+-]?)(\d+)")
@@ -41,7 +42,7 @@ def do_nothing_with_exp_expr(x: str) -> str:
     return x
 
 
-exp_expr_translators: Dict[ExpExprStyle, ExpExprTranslator] = {
+exp_expr_translators: Dict[str, ExpExprTranslator] = {
     "latex": latexify_exp_expr,
     "word": wordify_exp_expr,
     "original": do_nothing_with_exp_expr,
@@ -59,10 +60,12 @@ def create_g_format(digits: str) -> FormatFunction:
 def create_e_format(digits: str) -> FormatFunction:
     return lambda x: ("{:."+str(digits)+"e}").format(x)
 
+
 def create_force_f_format(digits: str) -> FormatFunction:
     return lambda x: sigfig.round(str(x), decimals=int(digits), warn=False)
 
-def create_translated_e_format(digits: str, style: ExpExprStyle = "original") -> FormatFunction:
+
+def create_translated_e_format(digits: str, style: str = "original") -> FormatFunction:
     e_format: FormatFunction = create_e_format(digits)
     exp_expr_translator: ExpExprTranslator = exp_expr_translators[style]
 
@@ -74,7 +77,7 @@ def create_translated_e_format(digits: str, style: ExpExprStyle = "original") ->
     return format
 
 
-def create_translated_g_format(digits: str, style: ExpExprStyle = "original") -> FormatFunction:
+def create_translated_g_format(digits: str, style: str = "original") -> FormatFunction:
     g_format: FormatFunction = create_g_format(digits)
     exp_expr_translator: ExpExprTranslator = exp_expr_translators[style]
 

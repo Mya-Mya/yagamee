@@ -1,4 +1,3 @@
-from typing import Literal
 from matplotlib import cycler
 
 font_defaults = {
@@ -32,4 +31,4 @@ legend_defaults = {
         0.2
     ]
 }
-yagamee_rcparams = font_defaults | figure_defaults | tick_defaults | legend_defaults
+yagamee_rcparams = dict({}, **font_defaults, **figure_defaults, **tick_defaults, **legend_defaults)
