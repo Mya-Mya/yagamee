@@ -1,9 +1,10 @@
-from typing import Callable, Tuple, Dict
+from typing import Callable, Tuple, Dict, Union
 import re
 from math import log10
 import sigfig
 
-FormatFunction = Callable[[float | int], str]
+Number = Union[int, float]
+FormatFunction = Callable[[Number], str]
 ExpExprStyle = {"latex": "latex", "word": "word", "original": "original"}
 ExpExprTranslator = Callable[[str], str]
 
