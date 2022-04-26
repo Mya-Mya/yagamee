@@ -1,4 +1,3 @@
-from typing import Literal
 from matplotlib import cycler
 
 font_defaults = {
